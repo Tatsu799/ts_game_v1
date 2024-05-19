@@ -4,7 +4,9 @@ function init() {
     let textEle = document.querySelector('.text');
     let redBtn = document.querySelector('.red-button');
     let whiteBtn = document.querySelector('.white-button');
+    ////temp
     let subText = document.querySelector('.sub-text'); //temp
+    ///temp
     let redBtnText = document.querySelector('.redBtnText');
     let whiteBtnText = document.querySelector('.whiteBtnText');
     let stage = new createjs.Stage('canvas');
@@ -31,16 +33,16 @@ function init() {
         gameState.startInstructions();
     });
     const redButton = redBtn.addEventListener('click', () => {
-        redBtnText.innerHTML = 'push red button';
         !gameState.redFlag ? (gameState.redFlag = true) : (gameState.redFlag = false);
         gameState.updateFlagState(gameState.redFlag, gameState.whiteFlag);
         console.log('push button', gameState.currentFlagState);
+        redBtnText.innerHTML = gameState.redFlag ? '赤上がってる' : '赤下がってる'; ///temp text
     });
     const whiteButton = whiteBtn.addEventListener('click', () => {
-        whiteBtnText.innerHTML = 'push white button';
         !gameState.whiteFlag ? (gameState.whiteFlag = true) : (gameState.whiteFlag = false);
         gameState.updateFlagState(gameState.redFlag, gameState.whiteFlag);
-        console.log(gameState.currentFlagState);
+        console.log('push button', gameState.currentFlagState);
+        whiteBtnText.innerHTML = gameState.whiteFlag ? '白上がってる' : '白下がってる'; ///temp text
     });
 }
 class GameState {
