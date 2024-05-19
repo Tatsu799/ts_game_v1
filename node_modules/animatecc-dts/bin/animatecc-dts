@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+var fs = require("fs");
+var path = require("path");
+var glob = require("glob");
+var args = require('minimist')(process.argv);
+
+var jsp = require("../lib/parse-js");
+var builder = require("../lib/model");
+var formatter = require("../lib/formatter");
+
+if (args.help || args._.length < 3) {
+  console.log("animatecc-dts <pattern> [--namespace createjs]");
+  console.log("");
+  console.log("Examples:");
+  console.log("\tanimatecc-dts *.js --namespace egret");
+  console.log("");
+  process.exit();
+}
+
+// Set default namespace
+if (!args.namespace) { args.namespace = "createjs"; }
+if (!args.reference) { args.reference = args.namespace + ".d.ts"; }
+var pattern = args._[2];
+
+function generateDts (fileName) {
+  var data = fs.readFileSync(fileName, "utf8");
+  var ast = jsp.parse(data);
+  var model = builder.parse(ast[1]);
+
+  return formatter(model, {
+    namespace: args.namespace,
+    reference: args.reference
+  });
+}
+
+glob(pattern, function(err, files) {
+  var total = files.length;
+  var current = 0;
+
+  if (total === 0) {
+    console.error("Couldn't find any files with pattern: "+pattern+"");
+  }
+
+  files.forEach(function(fileName) {
+    current++;
+    var filePath = path.resolve(fileName);
+    var dts = generateDts(filePath);
+    var output = filePath.replace(".js", ".d.ts");
+    fs.writeFileSync(output, dts);
+    console.log("("+ current +"/"+ total +"):", output, "written.");
+  });
+});
