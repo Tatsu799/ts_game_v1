@@ -23,7 +23,7 @@ function init() {
         if (gameState.judgeFlag(gameState.currentFlagState, current)) {
           gameState.updateCountGame();
           gameState.updateScore();
-          // console.log(gameState.countGame);
+          console.log(gameState.countGame);
           // console.log(gameState.countScore);
           console.log('正解！！');
           subText.innerHTML = '正解'; /////temp
@@ -33,7 +33,8 @@ function init() {
         }
       }, 2900);
     }, 0);
-    gameState.startInstructions();
+
+    gameState.startInstructions(gameState);
   });
 
   const redButton = redBtn.addEventListener('click', () => {
@@ -59,6 +60,7 @@ class GameState {
   currentFlagState: boolean[];
   countGame: number;
   countScore: number;
+  time: number;
   Instructions: { [index: number]: string } = {
     0: '赤上げて', //true r
     1: '赤下げて', //false r
@@ -79,6 +81,7 @@ class GameState {
     this.currentFlagState = [this.redFlag, this.whiteFlag];
     this.countGame = 0;
     this.countScore = 0;
+    this.time = 3000;
   }
 
   updateFlagState(redFlag: boolean, whiteFlag: boolean) {
@@ -93,12 +96,23 @@ class GameState {
     this.countScore += 10;
   }
 
+  resetData(gameState: GameState) {
+    gameState.countGame = 0;
+    gameState.countScore = 0;
+  }
+
   getResult() {}
 
   getRandomNumber() {
     let min: number = 0;
     let max: number = 4;
-    return Math.floor(Math.random() * (max - min) + min);
+
+    if (this.countGame < 10) {
+      return Math.floor(Math.random() * (max - min) + min);
+    } else {
+      max = 11;
+      return Math.floor(Math.random() * (max - min) + min);
+    }
   }
 
   flagInstructions(): string {
@@ -113,28 +127,28 @@ class GameState {
     return this.Instructions[random];
   }
 
-  startInstructions() {
+  startInstructions(gameState: GameState) {
     let text = <HTMLElement>document.querySelector('.sub-text'); //temp
     const timeIntervalId = window.setInterval(() => {
-      console.log('実行');
-      const current = this.flagInstructions();
+      console.log('実行2');
+      const current = gameState.flagInstructions();
 
       const timeOutId = window.setTimeout(() => {
-        if (this.judgeFlag(this.currentFlagState, current)) {
+        if (gameState.judgeFlag(gameState.currentFlagState, current)) {
           console.log('正解！！');
           text.innerHTML = '正解'; /////temp
-          this.updateCountGame();
-          this.updateScore();
-          // console.log(this.countGame);
-          // console.log(this.countScore);
+          gameState.updateCountGame();
+          gameState.updateScore();
+          console.log(gameState.countGame);
+          // console.log(gameState.countScore);
         } else {
-          clearTimeout(timeOutId);
-          clearTimeout(timeIntervalId);
+          // clearTimeout(timeOutId);
+          // clearTimeout(timeIntervalId);
           console.log('不正解');
           text.innerHTML = '不正解'; /////temp
         }
-      }, 2900);
-    }, 3000);
+      }, gameState.time - 100);
+    }, gameState.time);
   }
 
   judgeFlag(currentFlagState: boolean[], currentInstructions: string) {
