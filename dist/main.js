@@ -30,8 +30,22 @@ function init() {
         //     }
         //   }, 2900);
         // }, 0);
-        gameState.firstMove(); //////////////////////
-        gameState.startInstructions(gameState); //////////////////////;
+        ///////////////////////　参考
+        const sleep = (ms) => new Promise((resolve) => setTimeout(() => resolve(ms), ms));
+        sleep(0)
+            .then(() => {
+            console.log(1);
+            gameState.firstMove(); //////////////////////
+            // return sleep(1000);
+        })
+            .then(() => {
+            console.log(2);
+            gameState.startInstructions(gameState);
+            // return sleep(3000);
+        });
+        ///////////////////////　参考///////////////////////https://qiita.com/knaot0/items/af0a38cc916176cdd50f
+        // gameState.firstMove(); //////////////////////
+        // gameState.startInstructions(gameState); //////////////////////;
     });
     const redButton = redBtn.addEventListener('click', () => {
         !gameState.redFlag ? (gameState.redFlag = true) : (gameState.redFlag = false);
