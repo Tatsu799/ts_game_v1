@@ -12,25 +12,26 @@ function init() {
     let stage = new createjs.Stage('canvas');
     const gameState = new GameState();
     console.log(gameState);
+    const textEle1 = document.querySelector('.text');
     textEle.addEventListener('click', () => {
-        window.setTimeout(() => {
-            const current = gameState.flagInstructions();
-            window.setTimeout(() => {
-                if (gameState.judgeFlag(gameState.currentFlagState, current)) {
-                    gameState.updateCountGame();
-                    gameState.updateScore();
-                    console.log(gameState.countGame);
-                    // console.log(gameState.countScore);
-                    console.log('正解！！');
-                    subText.innerHTML = '正解'; /////temp
-                }
-                else {
-                    console.log('不正解');
-                    subText.innerHTML = '不正解';
-                }
-            }, 2900);
-        }, 0);
-        gameState.startInstructions(gameState);
+        // window.setTimeout(() => {
+        //   const current = gameState.flagInstructions();
+        //   window.setTimeout(() => {
+        //     if (gameState.judgeFlag(gameState.currentFlagState, current)) {
+        //       gameState.updateCountGame();
+        //       gameState.updateScore();
+        //       console.log(gameState.countGame);
+        //       // console.log(gameState.countScore);
+        //       console.log('正解！！');
+        //       subText.innerHTML = '正解'; /////temp
+        //     } else {
+        //       console.log('不正解');
+        //       subText.innerHTML = '不正解';
+        //     }
+        //   }, 2900);
+        // }, 0);
+        gameState.firstMove(); //////////////////////
+        gameState.startInstructions(gameState); //////////////////////;
     });
     const redButton = redBtn.addEventListener('click', () => {
         !gameState.redFlag ? (gameState.redFlag = true) : (gameState.redFlag = false);
@@ -66,8 +67,26 @@ class GameState {
         this.currentFlagState = [this.redFlag, this.whiteFlag];
         this.countGame = 0;
         this.countScore = 0;
-        this.time = 3000;
+        this.time = 3500;
     }
+    //////////////////////
+    firstMove() {
+        const textEle1 = document.querySelector('.text');
+        setTimeout(() => {
+            textEle1.innerHTML = '赤あげる';
+        }, 0);
+        setTimeout(() => {
+            textEle1.innerHTML = '白あげる';
+        }, 500);
+        setTimeout(() => {
+            textEle1.innerHTML = '赤さげる';
+        }, 1000);
+        setTimeout(() => {
+            textEle1.innerHTML = '白さげる';
+            // gameState.startInstructions(gameState);
+        }, 1500);
+    }
+    //////////////////////
     updateFlagState(redFlag, whiteFlag) {
         this.currentFlagState = [redFlag, whiteFlag];
     }
@@ -102,29 +121,45 @@ class GameState {
         console.log(this.Instructions[random]);
         return this.Instructions[random];
     }
+    //////////////////////
     startInstructions(gameState) {
         let text = document.querySelector('.sub-text'); //temp
-        const timeIntervalId = window.setInterval(() => {
-            console.log('実行2');
+        let timeIntervalId = window.setInterval(() => {
             const current = gameState.flagInstructions();
+            console.log('interval 発火');
+            //////ここにゲーにをいれれはいけるのか？？？
+            console.log('ゲージ発火');
             const timeOutId = window.setTimeout(() => {
+                console.log('timeout 発火');
+                console.log('ゲージ終了');
                 if (gameState.judgeFlag(gameState.currentFlagState, current)) {
                     console.log('正解！！');
                     text.innerHTML = '正解'; /////temp
                     gameState.updateCountGame();
                     gameState.updateScore();
-                    console.log(gameState.countGame);
+                    // console.log(gameState.countGame);
                     // console.log(gameState.countScore);
+                    // console.log(gameState.time);
+                    //////////////////////
+                    if (gameState.countGame === 3) {
+                        gameState.time = 2000;
+                    }
+                    if (gameState.countGame === 5) {
+                        gameState.time = 1000;
+                    }
+                    //////////////////////
                 }
                 else {
-                    // clearTimeout(timeOutId);
+                    // clearTimeout(timeOutId);いらないはず
                     // clearTimeout(timeIntervalId);
+                    // timeIntervalId = 0;S
                     console.log('不正解');
                     text.innerHTML = '不正解'; /////temp
                 }
-            }, gameState.time - 100);
-        }, gameState.time);
+            }, gameState.time - 500); //////////////////////
+        }, gameState.time); //////////////////////
     }
+    //////////////////////
     judgeFlag(currentFlagState, currentInstructions) {
         let result = false;
         switch (currentInstructions) {
